@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+# Names iTerm2 tab
+# http://superuser.com/a/560393
+function name_tab () {
+  if [ $1 ]; then
+    TAB_NAME=$1
+  else
+    # Get the current directory name if no tab name was specified
+    # http://stackoverflow.com/a/1371283
+    TAB_NAME=${PWD##*/}
+  fi
+
+  echo -ne "\033]0;$TAB_NAME\007"
+}
+
 __powerline() {
 
     # Unicode symbols
@@ -104,7 +118,7 @@ __powerline() {
       esac
     fi
 
-    __git_info() { 
+    __git_info() {
         [ -x "$(which git)" ] || return    # git not found
 
         local git_eng="env LANG=C git"   # force git output in English to make our work easier
@@ -130,7 +144,7 @@ __powerline() {
 
     ps1() {
         # Check the exit code of the previous command and display different
-        # colors in the prompt accordingly. 
+        # colors in the prompt accordingly.
         if [ $? -eq 0 ]; then
             local BG_EXIT="$BG_GREEN"
         else
@@ -151,6 +165,8 @@ __powerline() {
             PS1+="$BG_BLUE$FG_BASE3$(__git_info)$RESET"
         fi
         PS1+="$BG_EXIT$FG_BASE3 $PS_SYMBOL $RESET "
+
+        name_tab
     }
 
     PROMPT_COMMAND=ps1
