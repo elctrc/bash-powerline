@@ -1,19 +1,5 @@
 #!/usr/bin/env bash
 
-# Names iTerm2 tab
-# http://superuser.com/a/560393
-function name_tab () {
-  if [ $1 ]; then
-    TAB_NAME=$1
-  else
-    # Get the current directory name if no tab name was specified
-    # http://stackoverflow.com/a/1371283
-    TAB_NAME=${PWD##*/}
-  fi
-
-  echo -ne "\033]0;$TAB_NAME\007"
-}
-
 __powerline() {
 
     # Unicode symbols
@@ -105,19 +91,6 @@ __powerline() {
     readonly RESET="\[$(tput sgr0)\]"
     readonly BOLD="\[$(tput bold)\]"
 
-    if [[ -z "$PS_SYMBOL" ]]; then
-      case "$(uname)" in
-          Darwin)
-              PS_SYMBOL=$PS_SYMBOL_DARWIN
-              ;;
-          Linux)
-              PS_SYMBOL=$PS_SYMBOL_LINUX
-              ;;
-          *)
-              PS_SYMBOL=$PS_SYMBOL_OTHER
-      esac
-    fi
-
     __git_info() {
         [ -x "$(which git)" ] || return    # git not found
 
@@ -143,13 +116,6 @@ __powerline() {
     }
 
     ps1() {
-        # Check the exit code of the previous command and display different
-        # colors in the prompt accordingly.
-        if [ $? -eq 0 ]; then
-            local BG_EXIT="$BG_GREEN"
-        else
-            local BG_EXIT="$BG_RED"
-        fi
 
         PS1="$BG_BASE1$FG_BASE3 \w $RESET"
         # Bash by default expands the content of PS1 unless promptvars is disabled.
@@ -164,11 +130,15 @@ __powerline() {
             # promptvars is disabled. Avoid creating unnecessary env var.
             PS1+="$BG_BLUE$FG_BASE3$(__git_info)$RESET"
         fi
-        PS1+="$BG_EXIT$FG_BASE3 $PS_SYMBOL $RESET "
+        PS1+="\n$ "
 
-        name_tab
+        # Name iTerm2 tab after the current directory
+        # http://superuser.com/a/560393
+        # http://stackoverflow.com/a/1371283
+        echo -ne "\033]0;${PWD##*/}\007"
     }
 
+    # Names iTerm2 tab
     PROMPT_COMMAND=ps1
 }
 
