@@ -130,6 +130,10 @@ __powerline() {
             # promptvars is disabled. Avoid creating unnecessary env var.
             PS1+="$BG_BLUE$FG_BASE3$(__git_info)$RESET"
         fi
+        # Add in fix to display virtual env info if available
+        if [ ! -z "$VIRTUAL_ENV" ]; then
+            PS1+="$BG_ORANGE$FG_BASE3 VIRTUAL_ENV: $VIRTUAL_ENV $RESET"
+        fi
         PS1+="\n$ "
 
         # Name iTerm2 tab after the current directory
